@@ -37,20 +37,20 @@ def get_current_user(
             algorithms=[ALGORITHM]
         )
 
-        email = payload.get("sub")
-
-        if email is None:
-
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid token"
-            )
-
     except JWTError:
 
         raise HTTPException(
             status_code=401,
-            detail="Invalid token"
+            detail="Invalid or expired token"
+        )
+
+    email = payload.get("sub")
+
+    if not email:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Token payload is invalid"
         )
 
     user = (
@@ -59,7 +59,7 @@ def get_current_user(
         .first()
     )
 
-    if user is None:
+    if not user:
 
         raise HTTPException(
             status_code=401,
