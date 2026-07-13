@@ -17,6 +17,26 @@ ALGORITHM = "HS256"
 security = HTTPBearer()
 
 
+def decode_token(token: str):
+
+    try:
+
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        return payload
+
+    except JWTError:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+
 def get_current_user(
 
     credentials: HTTPAuthorizationCredentials = Depends(
@@ -29,20 +49,7 @@ def get_current_user(
 
     token = credentials.credentials
 
-    try:
-
-        payload = jwt.decode(
-            token,
-            SECRET_KEY,
-            algorithms=[ALGORITHM]
-        )
-
-    except JWTError:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired token"
-        )
+    payload = decode_token(token)
 
     email = payload.get("sub")
 
@@ -50,7 +57,7 @@ def get_current_user(
 
         raise HTTPException(
             status_code=401,
-            detail="Token payload is invalid"
+            detail="Invalid token payload"
         )
 
     user = (
