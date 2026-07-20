@@ -72,11 +72,15 @@ def login(
         user.password,
         db_user.hashed_password
     ):
+        
 
         raise HTTPException(
             status_code=400,
             detail="Invalid credentials"
         )
+    if not db_user.is_verified:
+
+        raise HTTPException(status_code=403,detail="Please verify your email first.")
 
     token = create_access_token(
         {

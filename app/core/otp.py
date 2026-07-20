@@ -10,7 +10,7 @@ def generate_otp() -> str:
     return "".join(
         random.choices(
             "0123456789",
-            k=OTP_LENGTH
+            k=6
         )
     )
 
