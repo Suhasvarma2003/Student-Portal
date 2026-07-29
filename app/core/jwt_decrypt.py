@@ -11,8 +11,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
 
-SECRET_KEY = "your_secret_key_here"
-ALGORITHM = "HS256"
+from app.core.config import (
+    SECRET_KEY,
+    ALGORITHM
+)
 
 security = HTTPBearer()
 

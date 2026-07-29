@@ -11,6 +11,8 @@ from app.core.otp import (
     is_otp_expired
 )
 
+from app.core.email import send_otp_email
+
 router = APIRouter(
     prefix="/otp",
     tags=["OTP"]
@@ -42,12 +44,13 @@ def send_otp(
 
     db.commit()
 
-    print("=" * 50)
-    print(f"OTP for {user.email}: {otp}")
-    print("=" * 50)
+    send_otp_email(
+        recipient=user.email,
+        otp=otp
+    )
 
     return {
-        "message": "OTP generated successfully"
+        "message": "OTP sent successfully"
     }
 
 
@@ -92,6 +95,8 @@ def verify_user_otp(
         )
 
     user.is_verified = True
+
+    # Clear OTP after successful verification
     user.otp = None
     user.otp_expiry = None
 
@@ -99,4 +104,4 @@ def verify_user_otp(
 
     return {
         "message": "OTP verified successfully"
-    }
+    }   
